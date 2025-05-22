@@ -8,6 +8,7 @@ public class Main {
     private static boolean isWin;
     private static boolean isLose;
     private static String usedLetters;
+    private static final int EASY = 1;
 
     public static void main(String[] args) throws FileNotFoundException {
         List<String> words = readWords();
@@ -24,9 +25,18 @@ public class Main {
     }
 
     private static void startGameLoop(List<String> words) {
+        System.out.println("Выберите уровень сложности 1 или 2");
+        System.out.println("1 - легкий, будут открыты две случайные буквы в маске слова, 2 - сложный, без подсказок:");
+        Scanner sc = new Scanner(System.in);
+        int gameLevel = sc.nextInt();
+
         String word = getRandomWord(words);
         String mask = "*".repeat(word.length());
         usedLetters = "";
+
+        if (gameLevel == EASY) {
+            mask = openLettersForEasyLevel(word, mask, 2);
+        }
 
         System.out.println("Добро пожаловать на игру виселица!");
         int mistakes = 0;
@@ -55,6 +65,16 @@ public class Main {
 
         printHangman(mistakes);
         printGameResult(word);
+    }
+
+    private static String openLettersForEasyLevel(String word, String mask, int letterCount) {
+        Random random = new Random();
+        for (int i = 0; i < letterCount; i++) {
+            int randomIndex = random.nextInt(word.length());
+            char letter = word.charAt(randomIndex);
+            mask = openLetter(word, mask, letter);
+        }
+        return mask;
     }
 
     private static char inputValidLetter(Scanner scanner) {
@@ -107,8 +127,6 @@ public class Main {
             System.out.println("Поздравляем, Вы победили!");
         }
     }
-
-
 
     private static List<String> readWords() throws FileNotFoundException {
         Scanner scanner = new Scanner(new File("words.txt"));
